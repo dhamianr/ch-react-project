@@ -1,12 +1,18 @@
 # React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Pre-entrega 1
 
-Currently, two official plugins are available:
+- Crear el proyecto utilizando Vite JS
+- Crear el componente ItemListContainer y pasarle una prop "greetings"
+- Crear NavBar con un menu de navegacion con Logo, Categorias y CartWidget
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Pre-entrega 2
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Instalar react-router (npm i react-router)
+- Configurar en el componente App la navegacion de los componentes: BrowserRouter, Router, Route
+- Genera links con el componente Link para poder navegar: tanto en NavBar como en Item (Ver detalle)
+- Crear ItemDetailContainer, mostrando los detalles de un producto.
+- Crear Item, que representa la Card de cada producto dentro del listado.
+- En ItemDetailContainer, leer la URL con useParams(), obtener el ID y buscar un unico producto con ese ID.
+- En ItemListContainer, leer la URL con useParams(), obtener la categoria y buscar un listado de productos segun esa categoria
+- IMPORTANTE: Tanto ItemDetail, como ItemList, deben leer los datos de forma asincrona {useEffect, useState}
