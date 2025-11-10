@@ -1,4 +1,25 @@
+import { useContext } from "react";
+import cartContext from "../context/cartContext";
+import Swal from "sweetalert2";
+
 function ItemDetail({ pokemon }) {
+  const { addItem } = useContext(cartContext);
+
+  const handleAddToCart = () => {
+    addItem({ ...pokemon, quantity: 1 });
+
+    Swal.fire({
+      title: "¡Agregado!",
+      text: `${pokemon.name} se agregó al carrito`,
+      imageUrl: pokemon.sprites.other["official-artwork"].front_default,
+      imageWidth: 100,
+      imageHeight: 100,
+      icon: "success",
+      confirmButtonText: "OK",
+      timer: 2000,
+      showConfirmButton: true,
+    });
+  };
   return (
     <div className="item-detail">
       <div className="detail-header">
@@ -55,6 +76,7 @@ function ItemDetail({ pokemon }) {
               </span>
             ))}
           </div>
+          <button onClick={handleAddToCart}>Agregar al carrito</button>
         </div>
       </div>
     </div>
