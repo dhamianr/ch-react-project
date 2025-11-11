@@ -12,6 +12,7 @@ export default function CheckoutForm(props) {
     console.log("enviando form");
     props.handleCheckout(formData);
     clearForm();
+    pokemonStockService.decreaseStock(id, quantityAdded);
   }
 
   function handleChange(event) {

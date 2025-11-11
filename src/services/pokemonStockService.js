@@ -1,7 +1,6 @@
-// src/services/pokemonStockService.js
 import {
-  getDocs,
   collection,
+  getDocs,
   doc,
   updateDoc,
   increment,
@@ -10,43 +9,24 @@ import { db } from "../data/FirestoreServices";
 
 class PokemonStockService {
   constructor() {
-    this.cache = {}; // Solo Firestore (Kanto)
+    this.cache = {}; // SOLO Firestore
   }
 
-  // Cargar TODOS los Pokémon vendibles desde Firestore
   async loadPremiumPokemon() {
-    try {
-      const querySnapshot = await getDocs(collection(db, "pokemon_stock"));
-
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        this.cache[data.id] = data;
-      });
-
-      console.log(
-        `✅ ${Object.keys(this.cache).length} pokémon cargados desde Firestore`
-      );
-      return true;
-    } catch (error) {
-      console.error("Error cargando Pokémon desde Firestore:", error);
-      return false;
-    }
+    const querySnapshot = await getDocs(collection(db, "pokemon_stock"));
+    querySnapshot.forEach((docSnap) => {
+      this.cache[docSnap.data().id] = docSnap.data();
+    });
   }
 
-  // Obtener datos comerciales
   getPokemonData(pokemonId, totalStats) {
-    // Pokémon Kanto (1-151) están en Firestore
+    // Pokémon REAL vendible → está en Firestore
     if (this.cache[pokemonId]) {
       const { rarity, price, stock } = this.cache[pokemonId];
-      return {
-        rarity,
-        price,
-        stock,
-        isPremium: true, // Ahora premium = en Firestore
-      };
+      return { rarity, price, stock, isPremium: true };
     }
 
-    // Si NO está en Firestore → Pokémon fuera del catálogo → NO VENDIBLE
+    // Pokémon fuera de catálogo → NO VENDIBLE
     return {
       rarity: "not-available",
       price: null,
@@ -55,23 +35,15 @@ class PokemonStockService {
     };
   }
 
-  // Disminuir stock (solo si existe en Firestore)
   async decreaseStock(pokemonId, quantity) {
-    if (!this.cache[pokemonId]) return; // Si no es Kanto → ignorar
-
-    try {
-      const docRef = doc(db, "pokemon_stock", `${pokemonId}`);
-      await updateDoc(docRef, {
-        stock: increment(-quantity),
-        sold: increment(quantity),
-      });
-
-      // Actualizar cache local
-      this.cache[pokemonId].stock -= quantity;
-      this.cache[pokemonId].sold = (this.cache[pokemonId].sold || 0) + quantity;
-    } catch (error) {
-      console.error("Error actualizando stock:", error);
-    }
+    if (!this.cache[pokemonId]) return;
+    const ref = doc(db, "pokemon_stock", `${pokemonId}`);
+    await updateDoc(ref, {
+      stock: increment(-quantity),
+      sold: increment(quantity),
+    });
+    this.cache[pokemonId].stock -= quantity;
+    this.cache[pokemonId].sold = (this.cache[pokemonId].sold || 0) + quantity;
   }
 
   getStock(pokemonId) {

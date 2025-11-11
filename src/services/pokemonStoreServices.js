@@ -2,33 +2,33 @@
 import { getAllPokemon } from "./pokeApi";
 import { pokemonStockService } from "./pokemonStockService";
 
-// Cargar catálogo de Kanto (1–151)
+// Kanto = 1–151
+const KANTO_LIMIT = 151;
+
 export async function getStorePokemons() {
-  // 1) Cargar los datos comerciales desde Firestore
+  // 1) Cargar los datos comerciales (precio, stock, rareza) desde Firestore
   await pokemonStockService.loadPremiumPokemon();
 
-  // 2) Traer los datos visuales de PokeAPI (solo 151)
-  const pokemons = await getAllPokemon(151);
+  // 2) Traer datos visuales de PokéAPI (solo 151)
+  const pokemons = await getAllPokemon(KANTO_LIMIT);
 
-  // 3) Merge visual + comercial
+  // 3) Merge UI + Datos comerciales
   return pokemons.map((pokemon) => {
     const { id } = pokemon;
 
-    // Por seguridad extrema: si apareciera algo >151 (no debería)
-    if (id > 151) {
+    // Si entra un Pokémon fuera de catálogo → marcar como no vendible
+    if (id > KANTO_LIMIT) {
       return {
         ...pokemon,
+        rarity: "not-available",
         price: null,
         stock: 0,
-        rarity: "not-available",
+        isPremium: false,
         isSellable: false,
       };
     }
 
-    // Calcular stats
-    const totalStats = pokemon.stats.reduce((acc, s) => acc + s.base_stat, 0);
-
-    // Obtener stock + precio desde el service
+    const totalStats = pokemon.stats.reduce((sum, s) => sum + s.base_stat, 0);
     const commercial = pokemonStockService.getPokemonData(id, totalStats);
 
     return {
@@ -37,4 +37,12 @@ export async function getStorePokemons() {
       isSellable: commercial.stock > 0,
     };
   });
+}
+
+export async function getStorePokemonById(id) {
+  await pokemonStockService.loadPremiumPokemon();
+
+  const pokemon = await getAllPokemon(1, id); // o tu getPokemonById si lo usás
+  if (!pokemon) return null;
+  return pokemon;
 }
