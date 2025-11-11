@@ -1,8 +1,25 @@
 import { Link } from "react-router-dom";
+import { pokemonStockService } from "../services/pokemonStockService";
 
 function Item({ pokemon }) {
+  const totalStats =
+    pokemon.stats.reduce((sum, stat) => sum + stat.base_stat, 0) || 0;
+  // Usar los valores que ya vienen en el objeto pokemon del merge
+  const {
+    isPremium,
+    discount = 0,
+    finalPrice,
+    stock,
+  } = pokemonStockService.getPokemonData(pokemon.id, totalStats);
+
+  console.log(pokemon.isPremium);
+  console.log(discount);
+  console.log(finalPrice);
+  console.log(stock);
+
   return (
-    <div className="item-card">
+    <div className={`pokemon-card ${isPremium ? "premium" : ""}`}>
+      {isPremium && <span className="premium-badge">⭐</span>}
       <img src={pokemon.sprites.front_default} alt={pokemon.name} />
       <h3>{pokemon.name}</h3>
       <p>#{pokemon.id}</p>
@@ -14,15 +31,13 @@ function Item({ pokemon }) {
           </span>
         ))}
       </div>
-      {pokemon.discount > 0 && (
-        <span className="discount-badge">-{pokemon.discount}%</span>
-      )}
+      {discount > 0 && <span className="discount-badge">-{discount}%</span>}
 
       <div className="price-section">
-        <span className="price">${pokemon.finalPrice}</span>
+        <span className="price">${finalPrice}</span>
       </div>
 
-      <p className="stock">Stock: {pokemon.stock}</p>
+      <p className="stock">Stock: {stock}</p>
 
       <Link to={`/detail/${pokemon.id}`} className="detail-link">
         Ver detalle

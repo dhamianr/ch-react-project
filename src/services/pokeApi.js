@@ -1,4 +1,15 @@
-import { getPokemonPricing } from "../data/pokemonPrices";
+import { pokemonStockService } from "./pokemonStockService";
+
+// Función auxiliar para calcular discount y finalPrice
+const calculatePricing = (price, isPremium) => {
+  const discount = isPremium
+    ? 0
+    : Math.random() > 0.85
+    ? Math.floor(Math.random() * 15)
+    : 0;
+  const finalPrice = price - (price * discount) / 100;
+  return { discount, finalPrice };
+};
 
 // llamada a la api para obtener los pokemon por tipo
 export const getPokemonByType = async (type) => {
@@ -11,11 +22,22 @@ export const getPokemonByType = async (type) => {
         const detailsResponse = await fetch(p.pokemon.url);
         const pokemonData = await detailsResponse.json();
 
-        const pricingData = getPokemonPricing(pokemonData);
+        const { rarity, price, stock, isPremium } =
+          pokemonStockService.getPokemonData(
+            pokemonData.id,
+            pokemonData.stats.reduce((sum, stat) => sum + stat.base_stat, 0)
+          );
+
+        const { discount, finalPrice } = calculatePricing(price, isPremium);
 
         return {
           ...pokemonData,
-          ...pricingData,
+          rarity,
+          price,
+          stock,
+          isPremium,
+          discount,
+          finalPrice,
         };
       })
     );
@@ -33,26 +55,38 @@ export const getRandomPokemonId = () => {
 
 export const getRandomPokemon = async () => {
   const randomId = getRandomPokemonId();
-  return await getPokemonbyId(randomId);
+  return await getPokemonById(randomId);
 };
 
 // llamada a la api para obtener los pokemon por id
-
 export const getPokemonById = async (id) => {
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     const pokemonData = await response.json();
     // hago el merge de mis datos locales con la data de la pokeApi
-    const pricingData = getPokemonPricing(pokemonData);
+    const { rarity, price, stock, isPremium } =
+      pokemonStockService.getPokemonData(
+        pokemonData.id,
+        pokemonData.stats.reduce((sum, stat) => sum + stat.base_stat, 0)
+      );
+
+    const { discount, finalPrice } = calculatePricing(price, isPremium);
+
     return {
       ...pokemonData,
-      ...pricingData,
+      rarity,
+      price,
+      stock,
+      isPremium,
+      discount,
+      finalPrice,
     };
   } catch (error) {
     console.error("error al obtener el pokemon:", error);
     return null;
   }
 };
+
 //funcion para ver los pokemon en lista (paginacion)
 export const getAllPokemon = async (offset = 0, limit = 20) => {
   try {
@@ -66,11 +100,22 @@ export const getAllPokemon = async (offset = 0, limit = 20) => {
         const detailsResponse = await fetch(p.url);
         const pokemonData = await detailsResponse.json();
 
-        const pricingData = getPokemonPricing(pokemonData);
+        const { rarity, price, stock, isPremium } =
+          pokemonStockService.getPokemonData(
+            pokemonData.id,
+            pokemonData.stats.reduce((sum, stat) => sum + stat.base_stat, 0)
+          );
+
+        const { discount, finalPrice } = calculatePricing(price, isPremium);
 
         return {
           ...pokemonData,
-          ...pricingData,
+          rarity,
+          price,
+          stock,
+          isPremium,
+          discount,
+          finalPrice,
         };
       })
     );
@@ -80,6 +125,7 @@ export const getAllPokemon = async (offset = 0, limit = 20) => {
     return [];
   }
 };
+
 //funcion para obtener los tipos de pokemon
 export const getPokemonTypes = async () => {
   try {

@@ -1,11 +1,24 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import cartContext from "../context/cartContext";
+import { pokemonStockService } from "../services/pokemonStockService";
 import Swal from "sweetalert2";
 
 function ItemDetail({ pokemon }) {
   const { addItem } = useContext(cartContext);
+  const [quantityAdded, setQuantityAdded] = useState(0);
+
+  // Usar los valores que ya vienen en el objeto pokemon del merge
+  const { isPremium, price, rarity, stock, discount = 0, finalPrice } = pokemon;
 
   const handleAddToCart = () => {
+    if (stock <= 0 || (isPremium && !quantityAdded)) {
+      Swal.fire({
+        title: "No hay stock disponible",
+        text: "Este Pokémon no está disponible en este momento",
+        icon: "error",
+      });
+      return;
+    }
     addItem({ ...pokemon, quantity: 1 });
 
     Swal.fire({
@@ -30,6 +43,16 @@ function ItemDetail({ pokemon }) {
         <div className="detail-info">
           <h1>{pokemon.name}</h1>
           <p className="pokemon-id">#{pokemon.id}</p>
+
+          {/* Badge Premium */}
+          {isPremium && (
+            <span className="badge badge-premium">⭐ Premium Stock</span>
+          )}
+
+          {/* Badge Rareza */}
+          <span className={`badge badge-${isPremium ? "premium" : rarity}`}>
+            {isPremium ? "Premium" : rarity.toUpperCase()}
+          </span>
 
           <div className="types">
             {pokemon.types.map((type) => (
@@ -56,17 +79,17 @@ function ItemDetail({ pokemon }) {
             ))}
           </div>
           <div className="pricing">
-            {pokemon.discount > 0 && (
-              <span className="discount-badge">-{pokemon.discount}%</span>
+            {discount > 0 && (
+              <span className="discount-badge">-{discount}%</span>
             )}
 
             <h3>{pokemon.name}</h3>
 
             <div className="price-section">
-              <span className="price">${pokemon.finalPrice}</span>
+              <span className="price">${finalPrice}</span>
             </div>
 
-            <p className="stock">Stock: {pokemon.stock}</p>
+            <p className="stock">Stock: {stock}</p>
           </div>
           <div className="abilities">
             <h3>Habilidades</h3>

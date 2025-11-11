@@ -13,12 +13,7 @@ function App() {
         <NavBar />
         <main className="main-content">
           <Routes>
-            <Route
-              path="/"
-              element={
-                <ItemListContainer greetings="Bienvenido a la Pokédex" />
-              }
-            />
+            <Route path="/" element={<ItemListContainer />} />
             <Route
               path="/category/:categoryId"
               element={<ItemListContainer />}

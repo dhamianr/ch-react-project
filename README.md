@@ -16,3 +16,5 @@
 - En ItemDetailContainer, leer la URL con useParams(), obtener el ID y buscar un unico producto con ese ID.
 - En ItemListContainer, leer la URL con useParams(), obtener la categoria y buscar un listado de productos segun esa categoria
 - IMPORTANTE: Tanto ItemDetail, como ItemList, deben leer los datos de forma asincrona {useEffect, useState}
+
+- npm run load-premium

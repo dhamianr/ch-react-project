@@ -1,10 +1,31 @@
 import { useContext, useState } from "react";
 import cartContext from "../context/cartContext";
 import Swal from "sweetalert2";
+import CheckoutForm from "./CheckOutForm";
+import { createBuyOrder } from "../data/FirestoreServices";
 
 function CartContainer() {
   const { cart, clearCart, getTotalPrice, removeItem } =
     useContext(cartContext);
+
+  async function handleCheckout(formData) {
+    const orderData = {
+      buyer: formData.username,
+      email: formData.email,
+      phone: formData.phone,
+      items: cart,
+      total: getTotalPrice(),
+    };
+    const response = await createBuyOrder(orderData);
+    clearCart();
+    Swal.fire({
+      title: "¡Compra realizada!",
+      text: `Gracias por tu compra. Tu orden: ${response.id} de compra. Te enviaremos un correo de confirmación a ${formData.email}`,
+      icon: "success",
+      confirmButtonText: "OK",
+      showConfirmButton: true,
+    });
+  }
 
   const handleRemoveItem = async (id) => {
     const item = cart.find((item) => item.id === id);
@@ -54,6 +75,7 @@ function CartContainer() {
       });
     }
   };
+
   return (
     <section>
       <h1>Carrito de compras</h1>
@@ -75,6 +97,8 @@ function CartContainer() {
       <hr />
       <div> Total de tu compra: ${getTotalPrice()}</div>
       <button onClick={handleClearCart}>Vaciar carrito</button>
+      <button onClick={handleCheckout}>Finalizar compra</button>
+      <CheckoutForm handleCheckout={handleCheckout} />
     </section>
   );
 }
