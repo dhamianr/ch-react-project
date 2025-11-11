@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { getStorePokemons } from "../services/pokemonStoreServices";
+import { pokemonStockService } from "../services/pokemonStockService";
 
 function Item({ pokemon }) {
   const totalStats =
@@ -10,7 +10,7 @@ function Item({ pokemon }) {
     discount = 0,
     finalPrice,
     stock,
-  } = getStorePokemons(pokemon.id, totalStats);
+  } = pokemonStockService.getPokemonData(pokemon.id, totalStats);
 
   return (
     <div className={`pokemon-card ${isPremium ? "premium" : ""}`}>

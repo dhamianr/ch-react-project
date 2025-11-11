@@ -2,7 +2,7 @@ import CartWidget from "./CartWidget";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getRandomPokemonId } from "../services/pokeApi";
-import { getStorePokemons } from "../services/pokemonStoreServices";
+import { getPokemonTypes } from "../services/pokeApi";
 
 export default function NavBar() {
   const [types, setTypes] = useState([]);
@@ -11,8 +11,13 @@ export default function NavBar() {
 
   useEffect(() => {
     const fetchTypes = async () => {
-      const data = await getStorePokemons();
-      setTypes(data.types);
+      try {
+        const data = await getPokemonTypes();
+        setTypes(data);
+      } catch (error) {
+        console.error("Error cargando tipos:", error);
+        setTypes([]);
+      }
     };
     fetchTypes();
   }, []);

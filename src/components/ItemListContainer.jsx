@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ItemList from "./ItemList.jsx";
-import { getStorePokemons } from "../services/pokemonStoreServices";
 import { getPokemonByType } from "../services/pokeApi";
+import { getAllPokemon } from "../services/pokeApi";
 
 function ItemListContainer({ greetings }) {
   const [pokemon, setPokemon] = useState([]);
@@ -17,7 +17,7 @@ function ItemListContainer({ greetings }) {
       if (categoryId) {
         data = await getPokemonByType(categoryId);
       } else {
-        data = await getStorePokemons();
+        data = await getAllPokemon();
       }
       setPokemon(data);
       setLoading(false);

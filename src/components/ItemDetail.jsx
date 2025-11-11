@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import cartContext from "../context/cartContext";
-import { getStorePokemons } from "../services/pokemonStoreServices";
+import { pokemonStockService } from "../services/pokemonStockService";
 import Swal from "sweetalert2";
 
 function ItemDetail({ pokemon }) {
@@ -33,9 +33,6 @@ function ItemDetail({ pokemon }) {
 
     // 1) Agregar al carrito (estado global)
     addItem({ ...pokemon, quantity: quantityAdded });
-
-    // 2) Reducir stock (Premium = Firestore / Regular = Memoria)
-    pokemonStockService.decreaseStock(id, quantityAdded);
 
     // 3) Feedback visual
     Swal.fire({

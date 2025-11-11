@@ -1,14 +1,28 @@
 import { useContext, useState } from "react";
 import cartContext from "../context/cartContext";
 import Swal from "sweetalert2";
-import CheckoutForm from "./CheckOutForm";
+import CheckOutForm from "./CheckOutForm";
 import { createBuyOrder } from "../data/FirestoreServices";
+import { pokemonStockService } from "../services/pokemonStockService";
 
 function CartContainer() {
   const { cart, clearCart, getTotalPrice, removeItem } =
     useContext(cartContext);
 
   async function handleCheckout(formData) {
+    // Validar stock antes de procesar la orden
+    for (const item of cart) {
+      const currentStock = pokemonStockService.getStock(item.id);
+      if (currentStock < item.quantity) {
+        Swal.fire({
+          title: "Stock insuficiente",
+          text: `${item.name} no tiene suficiente stock disponible. Stock actual: ${currentStock}`,
+          icon: "error",
+        });
+        return; // Detener el proceso si no hay stock suficiente
+      }
+    }
+
     const orderData = {
       buyer: formData.username,
       email: formData.email,
@@ -16,15 +30,30 @@ function CartContainer() {
       items: cart,
       total: getTotalPrice(),
     };
-    const response = await createBuyOrder(orderData);
-    clearCart();
-    Swal.fire({
-      title: "¡Compra realizada!",
-      text: `Gracias por tu compra. Tu orden: ${response.id} de compra. Te enviaremos un correo de confirmación a ${formData.email}`,
-      icon: "success",
-      confirmButtonText: "OK",
-      showConfirmButton: true,
-    });
+    try {
+      const response = await createBuyOrder(orderData);
+
+      // Descontar stock de todos los items después de crear la orden exitosamente
+      for (const item of cart) {
+        await pokemonStockService.decreaseStock(item.id, item.quantity);
+      }
+
+      clearCart();
+      Swal.fire({
+        title: "¡Compra realizada!",
+        text: `Gracias por tu compra. Tu orden: ${response.id}. Te enviaremos un correo de confirmación a ${formData.email}`,
+        icon: "success",
+        confirmButtonText: "OK",
+        showConfirmButton: true,
+      });
+    } catch (error) {
+      console.error("Error al procesar la orden:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema al procesar tu compra. Por favor, intenta nuevamente.",
+        icon: "error",
+      });
+    }
   }
 
   const handleRemoveItem = async (id) => {
@@ -98,7 +127,7 @@ function CartContainer() {
       <div> Total de tu compra: ${getTotalPrice()}</div>
       <button onClick={handleClearCart}>Vaciar carrito</button>
       <button onClick={handleCheckout}>Finalizar compra</button>
-      <CheckoutForm handleCheckout={handleCheckout} />
+      <CheckOutForm handleCheckout={handleCheckout} />
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function CheckoutForm(props) {
+export default function CheckOutForm(props) {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -12,7 +12,6 @@ export default function CheckoutForm(props) {
     console.log("enviando form");
     props.handleCheckout(formData);
     clearForm();
-    pokemonStockService.decreaseStock(id, quantityAdded);
   }
 
   function handleChange(event) {
