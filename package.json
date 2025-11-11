@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "load-premium": "node scripts/loadPremiumPokemon.js"
+    "load-premium": "node scripts/loadKanto151.js"
   },
   "dependencies": {
     "firebase": "^12.5.0",

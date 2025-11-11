@@ -1,7 +1,8 @@
 import CartWidget from "./CartWidget";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getPokemonTypes, getRandomPokemonId } from "../services/pokeApi";
+import { getRandomPokemonId } from "../services/pokeApi";
+import { getStorePokemons } from "../services/pokemonStoreServices";
 
 export default function NavBar() {
   const [types, setTypes] = useState([]);
@@ -10,10 +11,8 @@ export default function NavBar() {
 
   useEffect(() => {
     const fetchTypes = async () => {
-      const data = await getPokemonTypes();
-      // aca puedo limitar los tipo en el navbar (el total de tipos son 18 justamente)
-      //setTypes(data.slice(0, 18));
-      setTypes(data);
+      const data = await getStorePokemons();
+      setTypes(data.types);
     };
     fetchTypes();
   }, []);

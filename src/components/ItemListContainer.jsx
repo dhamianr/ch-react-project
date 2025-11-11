@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getAllPokemon, getPokemonByType } from "../services/pokeApi";
 import ItemList from "./ItemList.jsx";
+import { getStorePokemons } from "../services/pokemonStoreServices";
+import { getPokemonByType } from "../services/pokeApi";
 
 function ItemListContainer({ greetings }) {
   const [pokemon, setPokemon] = useState([]);
@@ -16,11 +17,12 @@ function ItemListContainer({ greetings }) {
       if (categoryId) {
         data = await getPokemonByType(categoryId);
       } else {
-        data = await getAllPokemon(0);
+        data = await getStorePokemons();
       }
       setPokemon(data);
       setLoading(false);
     };
+
     fetchPokemon();
   }, [categoryId]);
 
@@ -28,15 +30,7 @@ function ItemListContainer({ greetings }) {
     return <div className="loading">Cargando Pokemon...</div>;
   }
 
-  return (
-    <div className="item-list-container">
-      <h2>
-        {greetings ||
-          (categoryId ? `Tipo: ${categoryId}` : "Todos los Pokémon")}
-      </h2>
-      <ItemList pokemons={pokemon} />
-    </div>
-  );
+  return <ItemList pokemons={pokemon} />;
 }
 
 export default ItemListContainer;

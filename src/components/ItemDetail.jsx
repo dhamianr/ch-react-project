@@ -1,70 +1,87 @@
 import { useContext, useState } from "react";
 import cartContext from "../context/cartContext";
-import { pokemonStockService } from "../services/pokemonStockService";
+import { getStorePokemons } from "../services/pokemonStoreServices";
 import Swal from "sweetalert2";
 
 function ItemDetail({ pokemon }) {
   const { addItem } = useContext(cartContext);
-  const [quantityAdded, setQuantityAdded] = useState(0);
+  const [quantityAdded, setQuantityAdded] = useState(1);
 
-  // Usar los valores que ya vienen en el objeto pokemon del merge
-  const { isPremium, price, rarity, stock, discount = 0, finalPrice } = pokemon;
+  // Estos vienen listos desde pokemonStoreService
+  const {
+    isPremium,
+    rarity,
+    price,
+    stock,
+    types,
+    sprites,
+    stats,
+    abilities,
+    name,
+    id,
+  } = pokemon;
 
   const handleAddToCart = () => {
-    if (stock <= 0 || (isPremium && !quantityAdded)) {
+    if (stock <= 0) {
       Swal.fire({
-        title: "No hay stock disponible",
-        text: "Este Pokémon no está disponible en este momento",
+        title: "Sin stock",
+        text: "Este Pokémon no tiene stock disponible.",
         icon: "error",
       });
       return;
     }
-    addItem({ ...pokemon, quantity: 1 });
 
+    // 1) Agregar al carrito (estado global)
+    addItem({ ...pokemon, quantity: quantityAdded });
+
+    // 2) Reducir stock (Premium = Firestore / Regular = Memoria)
+    pokemonStockService.decreaseStock(id, quantityAdded);
+
+    // 3) Feedback visual
     Swal.fire({
       title: "¡Agregado!",
-      text: `${pokemon.name} se agregó al carrito`,
-      imageUrl: pokemon.sprites.other["official-artwork"].front_default,
-      imageWidth: 100,
-      imageHeight: 100,
+      text: `${name} se agregó al carrito.`,
+      imageUrl: sprites.other["official-artwork"].front_default,
+      imageWidth: 120,
+      imageHeight: 120,
       icon: "success",
-      confirmButtonText: "OK",
       timer: 2000,
-      showConfirmButton: true,
+      showConfirmButton: false,
     });
   };
+
   return (
     <div className="item-detail">
       <div className="detail-header">
-        <img
-          src={pokemon.sprites.other["official-artwork"].front_default}
-          alt={pokemon.name}
-        />
+        <img src={sprites.other["official-artwork"].front_default} alt={name} />
+
         <div className="detail-info">
-          <h1>{pokemon.name}</h1>
-          <p className="pokemon-id">#{pokemon.id}</p>
+          <h1>{name}</h1>
+          <p className="pokemon-id">#{id}</p>
 
           {/* Badge Premium */}
           {isPremium && (
-            <span className="badge badge-premium">⭐ Premium Stock</span>
+            <span className="badge badge-premium">⭐ POKEMON PREMIUM</span>
           )}
 
           {/* Badge Rareza */}
-          <span className={`badge badge-${isPremium ? "premium" : rarity}`}>
-            {isPremium ? "Premium" : rarity.toUpperCase()}
+          <span className={`badge badge-${rarity}`}>
+            {rarity.toUpperCase()}
           </span>
 
+          {/* Tipos */}
           <div className="types">
-            {pokemon.types.map((type) => (
+            {types.map((type) => (
               <span key={type.type.name} className={`type ${type.type.name}`}>
                 {type.type.name}
               </span>
             ))}
           </div>
 
+          {/* Stats */}
           <div className="stats">
             <h3>Stats</h3>
-            {pokemon.stats.map((stat) => (
+            {stats.map((stat) => (
               <div key={stat.stat.name} className="stat-bar">
                 <span>
                   {stat.stat.name}: {stat.base_stat}
@@ -78,28 +95,32 @@ function ItemDetail({ pokemon }) {
               </div>
             ))}
           </div>
+
+          {/* Precio y Stock */}
           <div className="pricing">
-            {discount > 0 && (
-              <span className="discount-badge">-{discount}%</span>
-            )}
-
-            <h3>{pokemon.name}</h3>
-
-            <div className="price-section">
-              <span className="price">${finalPrice}</span>
-            </div>
-
-            <p className="stock">Stock: {stock}</p>
+            <h3>Precio</h3>
+            <span className="price">${price}</span>
+            <p className="stock">Stock disponible: {stock}</p>
           </div>
+
+          {/* Habilidades */}
           <div className="abilities">
             <h3>Habilidades</h3>
-            {pokemon.abilities.map((ability) => (
+            {abilities.map((ability) => (
               <span key={ability.ability.name} className="ability">
                 {ability.ability.name}
               </span>
             ))}
           </div>
-          <button onClick={handleAddToCart}>Agregar al carrito</button>
+
+          {/* Botón agregar */}
+          <button
+            onClick={handleAddToCart}
+            disabled={stock <= 0}
+            className={stock <= 0 ? "disabled" : ""}
+          >
+            {stock > 0 ? "Agregar al carrito" : "Sin stock"}
+          </button>
         </div>
       </div>
     </div>
