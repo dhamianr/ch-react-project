@@ -31,6 +31,13 @@ export default function CheckOutForm(props) {
     });
   }
 
+  const isFormValid =
+    formData.username.trim() !== "" &&
+    formData.email.trim() !== "" &&
+    formData.phone.trim() !== "" &&
+    props.cart &&
+    props.cart.length > 0;
+
   return (
     <section>
       <form onSubmit={handleSubmit}>
@@ -69,7 +76,9 @@ export default function CheckOutForm(props) {
             ></input>
           </label>
         </div>
-        <button type="submit">Confirmar</button>
+        <button type="submit" disabled={!isFormValid}>
+          Confirmar
+        </button>
         <button onClick={clearForm} type="button">
           Limpiar Formulario
         </button>

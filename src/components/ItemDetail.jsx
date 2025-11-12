@@ -32,7 +32,7 @@ function ItemDetail({ pokemon }) {
     }
 
     // 1) Agregar al carrito (estado global)
-    addItem({ ...pokemon, quantity: quantityAdded });
+    addItem(pokemon, quantityAdded);
 
     // 3) Feedback visual
     Swal.fire({

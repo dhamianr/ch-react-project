@@ -30,7 +30,12 @@ function ItemListContainer({ greetings }) {
     return <div className="loading">Cargando Pokemon...</div>;
   }
 
-  return <ItemList pokemons={pokemon} />;
+  return (
+    <div className="item-list-container">
+      <h1>{greetings}</h1>
+      <ItemList pokemons={pokemon} />
+    </div>
+  );
 }
 
 export default ItemListContainer;

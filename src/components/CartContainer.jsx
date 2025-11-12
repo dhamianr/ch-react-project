@@ -22,12 +22,18 @@ function CartContainer() {
         return; // Detener el proceso si no hay stock suficiente
       }
     }
-
+    // Limpiar items: solo enviar campos esenciales sin undefined
+    const cleanedItems = cart.map((item) => ({
+      id: item.id,
+      name: item.name || "",
+      finalPrice: item.finalPrice || 0,
+      quantity: item.quantity || 1,
+    }));
     const orderData = {
       buyer: formData.username,
       email: formData.email,
       phone: formData.phone,
-      items: cart,
+      items: cleanedItems,
       total: getTotalPrice(),
     };
     try {
@@ -75,7 +81,7 @@ function CartContainer() {
         title: "¡Eliminado!",
         text: `Se eliminó ${item.name} del carrito`,
         icon: "success",
-        imageUrl: item.sprites.front_default,
+        imageUrl: item.image || item.sprites?.front_default || "",
         imageWidth: 100,
         imageHeight: 100,
         confirmButtonText: "OK",
@@ -114,7 +120,7 @@ function CartContainer() {
             <h3>{item.name}</h3>
             <img
               width="150"
-              src={item.sprites.front_default}
+              src={item.image || item.sprites?.front_default || ""}
               alt={item.name}
             ></img>
             <p>$ {item.finalPrice}</p>
@@ -126,8 +132,7 @@ function CartContainer() {
       <hr />
       <div> Total de tu compra: ${getTotalPrice()}</div>
       <button onClick={handleClearCart}>Vaciar carrito</button>
-      <button onClick={handleCheckout}>Finalizar compra</button>
-      <CheckOutForm handleCheckout={handleCheckout} />
+      <CheckOutForm handleCheckout={handleCheckout} cart={cart} />
     </section>
   );
 }

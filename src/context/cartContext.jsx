@@ -5,9 +5,27 @@ export function CartContextProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
   // * CRUD -> create read update delete
-  function addItem(item) {
+  function addItem(item, quantity) {
+    // <CHANGE> Deep copy del array completo
     const newCartItems = structuredClone(cartItems);
-    newCartItems.push(item);
+
+    const itemExists = newCartItems.find((prod) => prod.id === item.id);
+
+    if (itemExists) {
+      // Modificas directamente porque tienes una copia profunda
+      itemExists.quantity += quantity;
+    } else {
+      // Agregas el nuevo item
+      newCartItems.push({
+        id: item.id,
+        name: item.name,
+        finalPrice: item.finalPrice,
+        image: item.image,
+        sprites: item.sprites,
+        quantity,
+      });
+    }
+
     setCartItems(newCartItems);
   }
 
@@ -22,19 +40,14 @@ export function CartContextProvider({ children }) {
   }
 
   function countItemsInCart() {
-    let totalItems = 0;
-    cartItems.forEach((item) => (totalItems += item.quantity));
-    return totalItems;
-    // array.reduce()
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
   }
 
   function getTotalPrice() {
-    // calcular el costo total de la compra
-    let totalPrice = 0;
-    cartItems.forEach(
-      (item) => (totalPrice += item.finalPrice * item.quantity)
+    return cartItems.reduce(
+      (total, item) => total + item.finalPrice * item.quantity,
+      0
     );
-    return totalPrice;
   }
 
   return (
