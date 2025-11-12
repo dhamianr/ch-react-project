@@ -8,7 +8,6 @@ E-commerce de Pokémon desarrollado con React, donde puedes explorar, filtrar y 
 - 🔍 **Filtrado por tipo**: Busca Pokémon por su tipo (agua, fuego, planta, etc.)
 - 🛒 **Carrito de compras**: Agrega Pokémon al carrito y gestiona tu compra
 - 💰 **Sistema de precios**: Precios basados en rareza (común, poco común, raro, legendario, mítico)
-- 📱 **Responsive**: Diseño adaptable a diferentes tamaños de pantalla
 - 🎲 **Pokémon aleatorio**: Descubre un Pokémon al azar
 
 ## 🚀 Tecnologías Utilizadas
@@ -31,7 +30,7 @@ E-commerce de Pokémon desarrollado con React, donde puedes explorar, filtrar y 
 1. Clona el repositorio:
 
 ```bash
-git clone <url-del-repositorio>
+git clone <url del repo>
 cd ch-react-ecommerce
 ```
 
@@ -69,25 +68,7 @@ Este comando cargará los 151 Pokémon de Kanto a tu base de datos Firestore con
 npm run dev
 ```
 
-Abre [http://localhost:5173](http://localhost:5173) en tu navegador.
-
-### Build para producción
-
-```bash
-npm run build
-```
-
-### Preview del build
-
-```bash
-npm run preview
-```
-
-### Linter
-
-```bash
-npm run lint
-```
+Abre localhost en tu navegador.
 
 ## 📁 Estructura del Proyecto
 
