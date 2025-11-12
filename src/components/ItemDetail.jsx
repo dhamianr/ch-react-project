@@ -7,7 +7,7 @@ function ItemDetail({ pokemon }) {
   const { addItem } = useContext(cartContext);
   const [quantityAdded, setQuantityAdded] = useState(1);
 
-  // Estos vienen listos desde pokemonStoreService
+  // Estos datos vienen de pokemonStoreService
   const {
     isPremium,
     rarity,
@@ -55,11 +55,6 @@ function ItemDetail({ pokemon }) {
         <div className="detail-info">
           <h1>{name}</h1>
           <p className="pokemon-id">#{id}</p>
-
-          {/* Badge Premium */}
-          {isPremium && (
-            <span className="badge badge-premium">⭐ POKEMON PREMIUM</span>
-          )}
 
           {/* Badge Rareza */}
           <span className={`badge badge-${rarity}`}>

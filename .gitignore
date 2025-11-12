@@ -25,3 +25,6 @@ dist-ssr
 
 #Variables de entorno
 .env
+
+#test
+src/services/pokemonStockService3.js

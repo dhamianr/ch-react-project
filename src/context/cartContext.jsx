@@ -6,16 +6,13 @@ export function CartContextProvider({ children }) {
 
   // * CRUD -> create read update delete
   function addItem(item, quantity) {
-    // <CHANGE> Deep copy del array completo
     const newCartItems = structuredClone(cartItems);
 
     const itemExists = newCartItems.find((prod) => prod.id === item.id);
 
     if (itemExists) {
-      // Modificas directamente porque tienes una copia profunda
       itemExists.quantity += quantity;
     } else {
-      // Agregas el nuevo item
       newCartItems.push({
         id: item.id,
         name: item.name,
@@ -30,7 +27,6 @@ export function CartContextProvider({ children }) {
   }
 
   function removeItem(id) {
-    /* Eliminar el producto con ese ID del context */
     const newCartItems = cartItems.filter((item) => item.id !== id);
     setCartItems(newCartItems);
   }

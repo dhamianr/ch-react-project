@@ -4,7 +4,6 @@ import { pokemonStockService } from "../services/pokemonStockService";
 function Item({ pokemon }) {
   const totalStats =
     pokemon.stats.reduce((sum, stat) => sum + stat.base_stat, 0) || 0;
-  // Usar los valores que ya vienen en el objeto pokemon del merge
   const {
     isPremium,
     discount = 0,

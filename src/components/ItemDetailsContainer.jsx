@@ -27,7 +27,7 @@ function ItemDetailContainer() {
           icon: "error",
           confirmButtonText: "Volver",
         }).then(() => {
-          navigate("/"); // Redirige a home después que hace clic
+          navigate("/");
         });
       } finally {
         setLoading(false);
