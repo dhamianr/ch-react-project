@@ -26,7 +26,7 @@ function CartContainer() {
     const cleanedItems = cart.map((item) => ({
       id: item.id,
       name: item.name || "",
-      finalPrice: item.finalPrice || 0,
+      price: item.price || 0,
       quantity: item.quantity || 1,
     }));
     const orderData = {
@@ -123,7 +123,7 @@ function CartContainer() {
               src={item.image || item.sprites?.front_default || ""}
               alt={item.name}
             ></img>
-            <p>$ {item.finalPrice}</p>
+            <p>$ {item.price}</p>
             <p>Cantidad: {item.quantity}</p>
             <button onClick={() => handleRemoveItem(item.id)}>Eliminar</button>
           </div>
@@ -132,9 +132,12 @@ function CartContainer() {
       <hr />
       <div> Total de tu compra: ${getTotalPrice()}</div>
       <button onClick={handleClearCart}>Vaciar carrito</button>
-      <CheckoutForm handleCheckout={handleCheckout} cart={cart} />
+      <CheckoutForm
+        handleCheckout={handleCheckout}
+        cart={cart}
+        totalPrice={getTotalPrice()}
+      />
     </section>
   );
 }
-
 export default CartContainer;

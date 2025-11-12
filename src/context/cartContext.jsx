@@ -16,7 +16,7 @@ export function CartContextProvider({ children }) {
       newCartItems.push({
         id: item.id,
         name: item.name,
-        finalPrice: item.finalPrice,
+        price: item.price,
         image: item.image,
         sprites: item.sprites,
         quantity,
@@ -41,7 +41,7 @@ export function CartContextProvider({ children }) {
 
   function getTotalPrice() {
     return cartItems.reduce(
-      (total, item) => total + item.finalPrice * item.quantity,
+      (total, item) => total + item.price * item.quantity,
       0
     );
   }
