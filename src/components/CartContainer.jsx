@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import cartContext from "../context/cartContext";
 import Swal from "sweetalert2";
-import CheckOutForm from "./CheckOutForm";
+import CheckoutForm from "./CheckoutForm";
 import { createBuyOrder } from "../data/FirestoreServices";
 import { pokemonStockService } from "../services/pokemonStockService";
 
@@ -132,7 +132,7 @@ function CartContainer() {
       <hr />
       <div> Total de tu compra: ${getTotalPrice()}</div>
       <button onClick={handleClearCart}>Vaciar carrito</button>
-      <CheckOutForm handleCheckout={handleCheckout} cart={cart} />
+      <CheckoutForm handleCheckout={handleCheckout} cart={cart} />
     </section>
   );
 }
