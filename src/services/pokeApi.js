@@ -4,14 +4,6 @@ const KANTO_LIMIT = 151;
 
 const extractPokemonId = (url) => parseInt(url.split("/")[6]);
 
-const calculatePricing = (price, isPremium) => {
-  if (isPremium) return { discount: 0, finalPrice: price };
-
-  const discount = Math.random() > 0.85 ? Math.floor(Math.random() * 15) : 0;
-  const finalPrice = price - (price * discount) / 100;
-  return { discount, finalPrice };
-};
-
 export const getPokemonById = async (id) => {
   if (id > KANTO_LIMIT) {
     throw new Error(`Pokemon ID ${id} está fuera del límite de Kanto (1-151)`);
@@ -26,21 +18,12 @@ export const getPokemonById = async (id) => {
       (sum, s) => sum + s.base_stat,
       0
     );
-    const { rarity, price, stock, isPremium } =
-      pokemonStockService.getPokemonData(pokemonData.id, totalStats);
+    const { rarity, price, stock } = pokemonStockService.getPokemonData(
+      pokemonData.id,
+      totalStats
+    );
 
-    const { discount, finalPrice } = calculatePricing(price, isPremium);
-
-    return {
-      ...pokemonData,
-      rarity,
-      price,
-      stock,
-      isPremium,
-      discount,
-      finalPrice,
-      isSellable: stock > 0,
-    };
+    return { ...pokemonData, rarity, price, stock, isSellable: stock > 0 };
   } catch (error) {
     console.error(`Error al obtener pokemon ${id}:`, error);
     throw error;
